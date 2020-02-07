@@ -23,75 +23,91 @@ Installation
 ------------
 
 1. Download and extract the release files under the folder "protected/components/eavactiverecord".
-1. Run the SQL-script mysql.sql or postgresql.sql (if your DBMS is PostgreSQL) It is located in the following folder: "protected/components/eavactiverecord/schema/". It creates tables needed to work with EAV attributes: eav_set, eav_attribute, eav_attribute_set, eav_attribute_date, eav_attribute_int, eav_attribute_varchar, eav_attribute_text.
-1. Add the following lines in the file "protected/config/main.php":
+1. For Mysql run migration like this
+    ```   
+    php yiic.php migrate --migrationPath=application.components.eavactiverecords.migrations
+    ```
+    if your DBMS is PostgreSQL then run the SQL-script `postgresql.sql`. 
+    It is located in the following folder: `protected/components/eavactiverecord/schema/`. 
+    
+    All tables needed to work with EAV attributes will be created: 
+    - eav_set, 
+    - eav_attribute, 
+    - eav_attribute_set, 
+    - eav_attribute_date, 
+    - eav_attribute_int, 
+    - eav_attribute_varchar, 
+    - eav_attribute_text.
 
-   ```php
-array(
-     'import' => array(
-     'application.components.eavactiverecord.*',
-     'application.components.eavactiverecord.datatypes.*',
-     'application.components.eavactiverecord.helpers.*'
-)
-```
+3. Add the following lines in the file "protected/config/main.php":
+
+    ```
+    array(
+         'import' => array(
+             'application.components.eavactiverecord.*',
+             'application.components.eavactiverecord.datatypes.*',
+             'application.components.eavactiverecord.helpers.*'
+         ),
+   )
+    ```
 
 1. It requires cache to be activated in the application: 
 
-   ```php
-array(
-    …
-    'components'=>array(
+    ```php
+        array(
         …
-        'cache'=>array(
-            'class'=>'system.caching.CMemCache',
-            'servers'=>array(
-                array('host'=>'server1', 'port'=>11211, 'weight'=>60),
-                array('host'=>'server2', 'port'=>11211, 'weight'=>40),
+        'components'=>array(
+            …
+            'cache'=>array(
+                'class'=>'system.caching.CMemCache',
+                'servers'=>array(
+                    array('host'=>'server1', 'port'=>11211, 'weight'=>60),
+                    array('host'=>'server2', 'port'=>11211, 'weight'=>40),
+                ),
             ),
         ),
-    ),
-);
-```
+    );
+    ```
 
    The extension will use own cache component if it is defined as the following:
 
-   ```php
-array(
-    …
-    'components'=>array(
+    ```php
+        array(
         …
-        'eavCache'=>array(
-            'class'=>'system.caching.CMemCache',
-            'servers'=>array(
-                array('host'=>'server1', 'port'=>11211, 'weight'=>60),
-                array('host'=>'server2', 'port'=>11211, 'weight'=>40),
+        'components'=>array(
+            …
+            'eavCache'=>array(
+                'class'=>'system.caching.CMemCache',
+                'servers'=>array(
+                    array('host'=>'server1', 'port'=>11211, 'weight'=>60),
+                    array('host'=>'server2', 'port'=>11211, 'weight'=>40),
+                ),
             ),
         ),
-    ),
-);
-```
+    );
+    ```
    If you do not use cache, add the following code in the file "protected/config/main.php":
 
    ```php
-'components' => array(
+      'components' => array(
         'eavCache' => array(
             'class' => 'system.caching.CDummyCache'
         ),
      )
-```
+    ```
 
 1. Extend your model class from the class EavActiveRecord
 
-   ```php
-class Foo extends EavActiveRecord
-```
+    ```php
+    class Foo extends EavActiveRecord
+    ```
 
 1. Call the method Foo::addColumn(). This method must only be called once for each model that extends EavActiveRecord class. 
 It adds the new column "eav_set_id" in the associated database table.
 
-   ```php
-Foo::model()->addColumn();
-```
+    ```php
+    Foo::model()->addColumn();
+    ```
 
 1. Since v1.0.2 it includes the GUI module for user interaction (front-end module) based on the extension API. For detailed information about installing the module, reed the [EavModule Installation Guide](https://github.com/iAchilles/eavactiverecord/wiki/EavModule-Installation-Guide)
 
